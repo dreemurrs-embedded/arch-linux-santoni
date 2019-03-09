@@ -9,7 +9,7 @@ If you cannot get it to boot, you should try to get console-ramoops in `/sys/fs/
 
 ## System Specs:
 | Part     | Component                                  | 
-| -------- |:------------------------------------------:|
+| -------- | ------------------------------------------ |
 | CPU      | Qualcomm Snapdragon 435 - 8 Cores, 1.4 GHz |
 | RAM      | 2/3 GB                                     |
 | GPU      | Adreno 505                                 |
