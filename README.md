@@ -26,9 +26,11 @@ Full system specs: https://www.gsmarena.com/xiaomi_redmi_4_(4x)-8608.php#redmi-4
 - Display
 - Wi-Fi + Hotspot
 - USB Ethernet (for local SSH)
-- Sound
+- Sound (drop msm8920-sku7-snd-card folder from this repo to /usr/share/alsa/ucm)
 - Xorg
 - USB OTG
+- Vibrator (/sys/class/timed_output/vibrator)
+- DPMS for Xorg (screen going to sleep just fine)
 
 ## Not working (yet)
 - Camera (shown as /dev/video32-33, however opening it will freeze/crash the kernel)
@@ -44,11 +46,16 @@ Full system specs: https://www.gsmarena.com/xiaomi_redmi_4_(4x)-8608.php#redmi-4
 - Sometimes the device will freeze during booting.
 - Power management doesn't work this moment, due to Qualcomm's so-called "Crypto Engine" for SDHCI interrupting the device from going to sleep.
 - Framebuffer colors are messed up.
+- Random reboots happens, sometimes after booting the kernel, I don't have UART so I cannot test.
+ 
+## Device Source:
+- Kernel Source: https://github.com/Danct12/msm-3.18
+- Device tree: https://github.com/LineageOS/android_device_xiaomi_santoni
 
 ## To do:
 - Mainline the device (like what postmarketOS guys did)
 - Get pstore/ramoops to work for further debugging (when kernel crashes or when I do a reboot sometimes?)
-- Make a initramfs that chainload with the distro's initramfs (so no need to run mkbootimg again with the new initramfs). Not sure if that's possible?
+- Chainload distro's initramfs (so no need to run mkbootimg again with the new initramfs). Not sure if that's possible?
 
 All the changes and anything I got to work will be upstreamed to [postmarketOS] in order to help development.
 

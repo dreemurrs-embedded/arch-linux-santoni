@@ -1,0 +1,229 @@
+SectionVerb {
+        EnableSequence [
+                cdev "hw:msm8920sku7sndc"
+
+                cset "name='PRI_MI2S_RX Audio Mixer MultiMedia1' 1"
+                cset "name='MultiMedia1 Mixer TERT_MI2S_TX' 1"
+        ]
+
+        DisableSequence [
+                cdev "hw:msm8920sku7sndc"
+
+                cset "name='PRI_MI2S_RX Audio Mixer MultiMedia1' 0"
+                cset "name='MultiMedia1 Mixer TERT_MI2S_TX' 0"
+        ]
+
+        Value {
+                TQ "HiFi"
+                PlaybackPCM "hw:msm8920sku7sndc,0"
+                CapturePCM "hw:msm8920sku7sndc,0"
+        }
+
+}
+
+SectionDevice."Speaker" {
+        Comment "Speaker"
+
+        ConflictingDevice [
+        ]
+
+        EnableSequence [
+                cdev "hw:msm8920sku7sndc"
+
+                cset "name='MI2S_RX Channels' One"
+                cset "name='RX2 MIX1 INP1' RX2"
+                cset "name='RDAC2 MUX' RX2"
+                cset "name='HPHR' Switch"
+                cset "name='Lineout_1 amp' ENABLE"
+                cset "name='PRI_MI2S_RX Audio Mixer MultiMedia1' 1"
+        ]
+
+        DisableSequence [
+                cdev "hw:msm8920sku7sndc"
+
+                cset "name='MI2S_RX Channels' One"
+                cset "name='RX2 MIX1 INP1' ZERO"
+                cset "name='RDAC2 MUX' ZERO"
+                cset "name='HPHR' ZERO"
+                cset "name='Lineout_1 amp' DISABLE"
+                cset "name='PRI_MI2S_RX Audio Mixer MultiMedia1' 0"
+        ]
+
+        Value {
+                PlaybackChannels "2"
+        }
+
+}
+
+SectionDevice."Headphones" {
+        Comment "Headset"
+
+        ConflictingDevice [
+        ]
+
+        EnableSequence [
+                cdev "hw:msm8920sku7sndc"
+
+                cset "name='MI2S_RX Channels' Two"
+                cset "name='RX1 MIX1 INP1' RX1"
+                cset "name='RX2 MIX1 INP1' RX2"
+                cset "name='RDAC2 MUX' RX2"
+                cset "name='HPHL' Switch"
+                cset "name='HPHR' Switch"
+                cset "name='headset amp' ENABLE"
+                cset "name='PRI_MI2S_RX Audio Mixer MultiMedia1' 1"
+        ]
+
+        DisableSequence [
+                cdev "hw:msm8920sku7sndc"
+
+                cset "name='MI2S_RX Channels' One"
+                cset "name='RX1 MIX1 INP1' ZERO"
+                cset "name='RX2 MIX1 INP1' ZERO"
+                cset "name='RDAC2 MUX' ZERO"
+                cset "name='HPHL' ZERO"
+                cset "name='HPHR' ZERO"
+                cset "name='headset amp' DISABLE"
+                cset "name='PRI_MI2S_RX Audio Mixer MultiMedia1' 0"
+        ]
+
+        Value {
+                PlaybackChannels "2"
+        }
+
+}
+
+SectionDevice."Handset" {
+        Comment "Handset earpiece"
+
+        ConflictingDevice [
+                "Speaker"
+                "SpeakerMic"
+                "Headphones"
+        ]
+
+        EnableSequence [
+                cdev "hw:msm8920sku7sndc"
+
+                cset "name='RX1 MIX1 INP1' RX1"
+                cset "name='RDAC2 MUX' RX1"
+                cset "name='RX1 Digital Volume' 86"
+                cset "name='EAR PA Gain' POS_6_DB"
+                cset "name='EAR_S' Switch"
+                cset "name='PRI_MI2S_RX Audio Mixer MultiMedia1' 1"
+        ]
+
+        DisableSequence [
+                cdev "hw:msm8920sku7sndc"
+
+                cset "name='RX1 MIX1 INP1' ZERO"
+                cset "name='RDAC2 MUX' ZERO"
+                cset "name='RX1 Digital Volume' 86"
+                cset "name='EAR PA Gain' POS_6_DB"
+                cset "name='EAR_S' ZERO"
+                cset "name='PRI_MI2S_RX Audio Mixer MultiMedia1' 0"
+        ]
+
+        Value {
+                PlaybackChannels "2"
+        }
+
+}
+
+SectionDevice."HandsetMic" {
+        Comment "Handset microphone"
+
+        ConflictingDevice [
+                "Speaker"
+                "SpeakerMic"
+                "HeadsetMic"
+        ]
+
+        EnableSequence [
+                cdev "hw:msm8920sku7sndc"
+
+                cset "name='ADC1 Volume' 6"
+                cset "name='DEC1 MUX' ADC1"
+                cset "name='IIR1 INP1 MUX' DEC1"
+                cset "name='MultiMedia1 Mixer TERT_MI2S_TX' 1"
+        ]
+
+        DisableSequence [
+                cdev "hw:msm8920sku7sndc"
+
+                cset "name='ADC1 Volume' 4"
+                cset "name='DEC1 MUX' ZERO"
+                cset "name='MultiMedia1 Mixer TERT_MI2S_TX' 0"
+        ]
+
+        Value {
+                CaptureChannels "2"
+        }
+
+}
+
+SectionDevice."SpeakerMic" {
+        Comment "Handset microphone for speaker-mode"
+
+        ConflictingDevice [
+                "Handset"
+                "HandsetMic"
+                "HeadsetMic"
+        ]
+
+        EnableSequence [
+                cdev "hw:msm8920sku7sndc"
+
+                cset "name='ADC1 Volume' 6"
+                cset "name='DEC1 MUX' ADC1"
+                cset "name='IIR1 INP1 MUX' DEC1"
+                cset "name='MultiMedia1 Mixer TERT_MI2S_TX' 1"
+        ]
+
+        DisableSequence [
+                cdev "hw:msm8920sku7sndc"
+
+                cset "name='ADC1 Volume' 4"
+                cset "name='DEC1 MUX' ZERO"
+                cset "name='MultiMedia1 Mixer TERT_MI2S_TX' 0"
+        ]
+
+        Value {
+                CaptureChannels "2"
+        }
+
+}
+
+SectionDevice."HeadsetMic" {
+        Comment "Headset microphone"
+
+        ConflictingDevice [
+                "HandsetMic"
+                "SpeakerMic"
+        ]
+
+        EnableSequence [
+                cdev "hw:msm8920sku7sndc"
+
+                cset "name='ADC2 Volume' 6"
+                cset "name='DEC1 MUX' ADC2"
+                cset "name='ADC2 MUX' INP2"
+                cset "name='IIR1 INP1 MUX' DEC1"
+                cset "name='MultiMedia1 Mixer TERT_MI2S_TX' 1"
+        ]
+
+        DisableSequence [
+                cdev "hw:msm8920sku7sndc"
+
+                cset "name='ADC2 Volume' 4"
+                cset "name='DEC1 MUX' ZERO"
+                cset "name='ADC2 MUX' ZERO"
+                cset "name='MultiMedia1 Mixer TERT_MI2S_TX' 0"
+        ]
+
+        Value {
+                CaptureChannels "2"
+        }
+
+}
+
