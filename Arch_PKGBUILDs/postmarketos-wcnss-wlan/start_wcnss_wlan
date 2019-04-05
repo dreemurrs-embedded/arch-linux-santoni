@@ -1,0 +1,19 @@
+#!/bin/sh
+echo "####################################"
+echo "## DANCTNIX WIFI BOOTING SEQUENCE ##"
+echo "####################################"
+
+
+start_wcnss_wlan() {
+	# This only need to be run once, there's no need for a second.
+	_once="/tmp/_start_wcnss_wlan"
+	[ -e "$_once" ] && echo "Script has already ran, quitting." && return
+	touch $_once
+	echo "Enabling WCNSS WLAN driver"
+	echo 1 > /dev/wcnss_wlan 2>/dev/null
+	if [ -e /sys/module/wlan/parameters/fwpath ]; then
+		echo sta > /sys/module/wlan/parameters/fwpath
+	fi	
+}
+
+start_wcnss_wlan

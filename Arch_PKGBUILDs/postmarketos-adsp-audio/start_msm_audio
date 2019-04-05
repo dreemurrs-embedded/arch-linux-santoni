@@ -1,0 +1,16 @@
+#!/bin/sh
+echo "####################################"
+echo "## DANCTNIX ADSP BOOTING SEQUENCE ##"
+echo "####################################"
+
+start_adsp_service() {
+	# Like other service starter scripts, this should only be run **once**!
+	_once="/tmp/_start_adsp_service"
+	[ -e "$_once" ] && echo "Script has already started, quitting." && return
+	touch "$_once"
+
+	echo "Starting ADSP Service"
+	echo 1 > /sys/kernel/boot_adsp/boot
+}
+
+start_adsp_service

@@ -1,0 +1,21 @@
+# Maintainer: Danct12 <dancthuynh255@gmail.com>
+pkgname=postmarketos-wcnss-wlan
+pkgver=0.1
+pkgrel=0
+pkgdesc="postmarketOS WCNSS WLAN service. This enables WLAN driver on MSM/QC devices."
+arch=('any')
+url="https://postmarketos.org"
+license=('GPL')
+source=('start_wcnss_wlan'
+	'wcnss-wlan.service')
+
+package() {
+	# Install systemd service and USB networking script
+	mkdir -p "$srcdir"/usr/lib/danctnix
+	install -D -m644 "$srcdir"/wcnss-wlan.service \
+		"$pkgdir"/etc/systemd/system/wcnss-wlan.service
+	install -D -m755 "$srcdir"/start_wcnss_wlan \
+		"$pkgdir"/usr/lib/danctnix/start_wcnss_wlan
+}
+md5sums=('47cac8434f5fbdf8c863cf5ce480aa49'
+         '5f05ef9e526269c827fd06686606592b')

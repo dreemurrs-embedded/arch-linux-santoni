@@ -1,0 +1,21 @@
+# Maintainer: Danct12 <dancthuynh255@gmail.com>
+pkgname=postmarketos-adsp-audio
+pkgver=0.1
+pkgrel=0
+pkgdesc="postmarketOS ADSP driver. This loads MSM ADSP driver."
+arch=('any')
+url="https://postmarketos.org"
+license=('GPL')
+source=('start_msm_audio'
+	'adsp-audio.service')
+
+package() {
+	# Install systemd service and USB networking script
+	mkdir -p "$srcdir"/usr/lib/danctnix
+	install -D -m644 "$srcdir"/adsp-audio.service \
+		"$pkgdir"/etc/systemd/system/adsp-audio.service
+	install -D -m755 "$srcdir"/start_msm_audio \
+		"$pkgdir"/usr/lib/danctnix/start_msm_audio
+}
+md5sums=('56c931e6d2d3224fce473ca595d5cea3'
+         '03e2de75e5710afe13759169c4b69001')
