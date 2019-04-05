@@ -1,0 +1,22 @@
+# Maintainer: Danct12 <dancthuynh255@gmail.com>
+pkgname=postmarketos-usb-networking
+pkgver=0.1
+pkgrel=0
+pkgdesc="postmarketOS USB Networking, this opens a network device from the device to host."
+arch=('any')
+url="https://postmarketos.org"
+license=('GPL')
+install='usbnetwork.install'
+source=('start_usb_networking'
+	'usb_networking.service')
+
+package() {
+	# Install systemd service and USB networking script
+	mkdir -p "$srcdir"/usr/lib/danctnix
+	install -D -m644 "$srcdir"/usb_networking.service \
+		"$pkgdir"/etc/systemd/system/usb_networking.service
+	install -D -m755 "$srcdir"/start_usb_networking \
+		"$pkgdir"/usr/lib/danctnix/start_usb_networking
+}
+md5sums=('90bda7492fe0da2c537bb79e53b8affa'
+         'd5463bb35b1b2bcb2efa60baacc05dcf')

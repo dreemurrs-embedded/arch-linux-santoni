@@ -1,0 +1,9 @@
+[Unit]
+After=sysinit.target
+
+[Service]
+Type=simple
+ExecStart=/usr/lib/danctnix/start_usb_networking
+
+[Install]
+WantedBy=multi-user.target

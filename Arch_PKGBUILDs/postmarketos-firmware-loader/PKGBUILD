@@ -1,0 +1,20 @@
+# Maintainer: Danct12 <dancthuynh255@gmail.com>
+pkgname=postmarketos-firmware-loader
+pkgver=0.1
+pkgrel=0
+pkgdesc="postmarketOS firmware loader, used to load proprietary blobs on devices running native GNU/Linux"
+arch=('any')
+url="https://postmarketos.org"
+license=('GPL')
+source=('firmwareload.sh'
+	'50-firmware.rules')
+
+package() {
+	# Install udev rules and firmware loader script.
+	install -D -m644 "$srcdir"/50-firmware.rules \
+		"$pkgdir"/etc/udev/rules.d/50-firmware.rules
+	install -D -m755 "$srcdir"/firmwareload.sh \
+		"$pkgdir"/usr/lib/firmwareload.sh
+}
+sha1sums=('3c6edf3b83410407cf846fea06a23dca57a23d35'
+          '3b7a118cd27b74291eb2165392fd945745743420')

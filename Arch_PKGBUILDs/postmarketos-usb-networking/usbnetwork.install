@@ -1,0 +1,15 @@
+pre_install() {
+	echo "!! WARNING !!"
+	echo "This script will not enable access directly to the device! It'll only expose the device's USB networking to host!"
+}
+
+post_install() {
+	echo "!! SCRIPT HAS BEEN INSTALLED !!"
+	echo "To enable the service do:"
+	echo "-	sudo systemctl enable usb_networking.service"
+}
+
+post_remove() {
+	echo "Disabling the service"
+	systemctl disable usb_networking.service
+}

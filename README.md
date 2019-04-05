@@ -66,7 +66,7 @@ Full system specs: https://www.gsmarena.com/xiaomi_redmi_4_(4x)-8608.php#redmi-4
 - Device tree: https://github.com/LineageOS/android_device_xiaomi_santoni
 
 ## To do:
-- Mainline the device (like what postmarketOS guys did)
+- ~~Mainline the device (like what postmarketOS guys did)~~ There's always a risk of getting the magic smoke out of the device, so this isn't going to happen anytime soon (if you're someone with a brave **SOUL** and determination, feel free to help out!)
 - Get pstore/ramoops to work for further debugging (when kernel crashes or when I do a reboot sometimes?)
 - Chainload distro's initramfs (so no need to run mkbootimg again with the new initramfs). Not sure if that's possible?
 
