@@ -18,7 +18,13 @@
 This project here aims to get Native Arch Linux running on the Xiaomi Redmi 4X (no chroot)
 I would recommend to use a USB stick or SD card to boot this, you can install it on the eMMC, but I prefer SD card more since you don't have to tamper with the eMMC.
 
-If you cannot get it to boot, you should try to get ~~console-ramoops in `/sys/fs/pstore`~~ **TO-DO: GET PSTORE/RAMOOPS TO WORK**.
+If you cannot get it to boot, you should try to get `/proc/last_kmsg`.
+
+## Why are we doing this?
+We're doing this because:
+- We want to expand the device's lifespan.
+- Android is running on a Linux kernel, so why this isn't possible?
+- We really enjoy the challenge.
 
 ## System Specs:
 | Part     | Component                                  | 
@@ -28,7 +34,7 @@ If you cannot get it to boot, you should try to get ~~console-ramoops in `/sys/f
 | GPU      | Adreno 505                                 |
 | Storage  | 16/32 GB eMMC                              |
 | Ext Storage | microSD - up to 128 GB                  |
-| OS       | Android 6.0 (launch)                       |
+| OS       | Android 6.0 (launch) - Android 7.1                       |
 | Other    | Wi-Fi, Bluetooth 4.2, GPS                  |
 
 Full system specs: https://www.gsmarena.com/xiaomi_redmi_4_(4x)-8608.php#redmi-4x
@@ -38,38 +44,38 @@ Full system specs: https://www.gsmarena.com/xiaomi_redmi_4_(4x)-8608.php#redmi-4
 - Flashing (boot.img only tested)
 - Display
 - Wi-Fi + Hotspot
-- USB Ethernet (for local SSH)
+- USB Ethernet (local SSH, but also SSH via USB works)
 - Sound (drop msm8920-sku7-snd-card folder from this repo to /usr/share/alsa/ucm)
 - Xorg
+- DPMS for Xorg (screen going to sleep just fine)
 - USB OTG
 - Vibrator (/sys/class/timed_output/vibrator)
-- DPMS for Xorg (screen going to sleep just fine)
 
 ## Not working (yet)
-- Camera (shown as /dev/video32-33, however opening it will freeze/crash the kernel)
-- Modem (for calls/SMS/mobile data)
+- Camera (broken in kernel? accessing /dev/video32 and 33 will crash the kernel)
+- Modem
 - GPS
 - Accelerometer
 - Light Sensor
-- GPU (Freedreno only supports a2xx-a4xx, which this device is a Adreno 505)
-- Wayland (works in [postmarketOS])
+- GPU (Freedreno, through if that doesn't work, we probably might stuck with libhybris until device's mainline kernel)
+- Wayland DPMS (backlight stays on)
 
 ## Bugs
 - Framebuffer Console doesn't work.
-~~- Sometimes the device will freeze during booting.~~ Seems to be fixed with msm-3.18 upstream kernel.
 - Power management doesn't work this moment, due to Qualcomm's so-called "Crypto Engine" for SDHCI interrupting the device from going to sleep.
 - Framebuffer colors are messed up.
-- WCNSS driver might not have enough time to be loaded on first bootup, this might be able to work around by adding a delay after the Wi-Fi service started.
+- /proc/last_kmsg is corrupted, through still readable.
  
 ## Device Source:
-- Kernel Source: https://github.com/Danct12/msm-3.18
+- Kernel Source: https://github.com/Danct12/msm-3.18 <rel/msm-3.18-archlinux>
 - Device tree: https://github.com/LineageOS/android_device_xiaomi_santoni
 
 ## To do:
-- ~~Mainline the device (like what postmarketOS guys did)~~ There's always a risk of getting the magic smoke out of the device, so this isn't going to happen anytime soon (if you're someone with a brave **SOUL** and determination, feel free to help out!)
-- Get pstore/ramoops to work for further debugging (when kernel crashes or when I do a reboot sometimes?)
-- Chainload distro's initramfs (so no need to run mkbootimg again with the new initramfs). Not sure if that's possible?
+- Mainline the device (like what postmarketOS guys did)
+**WARNING: There's always a risk of getting the magic smoke out of the device (by set the regulator settings wrong, we already have a case of fried device with the xiaomi-tissot), so this isn't going to happen anytime soon (if you're someone with a brave **SOUL** and determination, feel free to help out!)**
 
 All the changes and anything I got to work will be upstreamed to [postmarketOS] in order to help development.
 
-For more information in development (but also interested into getting Arch on any devices), join DanctNIX Discord: https://discord.gg/AvtdRJ3
+Stay determined, $USER!
+
+For more information in development (but also interested into getting Arch on other devices), join DanctNIX Discord: https://discord.gg/AvtdRJ3
