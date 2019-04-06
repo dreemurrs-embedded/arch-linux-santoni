@@ -17,5 +17,6 @@ package() {
 	install -D -m755 "$srcdir"/start_wcnss_wlan \
 		"$pkgdir"/usr/lib/danctnix/start_wcnss_wlan
 }
+
 md5sums=('47cac8434f5fbdf8c863cf5ce480aa49'
-         '5f05ef9e526269c827fd06686606592b')
+         '3b9e79ade4c431dcb2cde24d366d4fd9')
