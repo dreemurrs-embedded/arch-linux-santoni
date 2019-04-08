@@ -1,0 +1,305 @@
+ARCH LINUX ON PORTABLE DEVICES
+INSTALLATION GUIDE - PORTING GUIDE
+      UPDATED ON APRIL 8, 2019
+-----------------------
+READ THE BELOW WARNING BEFORE PROCEED:
+
+/*
+ * Your warranty is now void, probably.
+ *
+ * I am not responsible for bricked devices, dead SD cards, 
+ * thermonuclear war, or you getting fired because the alarm failed to go off. Please
+ * do some research if you have any concerns when using a full GNU/Linux distro
+ * before flashing it! YOU are choosing to make these modifications, and if
+ * you point the finger at me for messing up your device, I will laugh at you.
+ */
+
+NOTE: Currently, we only know how to load Arch Linux on devices that uses fastboot (common on Android devices, and probably Jolla, Firefox OS). On Samsung devices, you'll need to convert it to a heimdall image.
+
+NOTE: We only support installing on a SD card right now, this guide might be updated in the future for internal storage.
+
+NOTE: This is not ready to be used as a daily phone device yet! We're still missing ALOT features, most importantly calling and SMS isn't possible.
+
+We'll be referring the first character as which privileged user we need to run as:
+# - root
+$ - non-root user (assuming your user)
+
+-----------------------
+Chapter 1: FIRST STEPS
+This chapter contains the first steps you should take before attempting porting a device.
+
+REQUIREMENTS:
+- A computer
+- OPTIONAL: A fast computer, this isn't required, it's just so you can compile the kernel faster.
+- Decent knowledge in using a *nix shell
+- Bootloader unlocked target device (can be a tablet or a smartphone, not sure if this is possible on a TV box)
+- SD Card Reader
+- Soul and determination
+
+GETTING HELP:
+If you get stuck at any point during the porting process, we’re here to help! You can contact us via the Discord server:
+https://discord.gg/AvtdRJ3
+
+Keep in mind that not all of us are online frequently and can help with certain things. It might take sometime for someone to respond.
+
+ANDROID TARGET DEVICE REQUIREMENTS:
+
+- Source availability: Your device kernel source code must be available! You can get the source code from manufacturer website, mostly can be found in the support page.
+
+NOTE: If the source code isn't available, it's best to send them a nice email about releasing the source code, and if they refuse to give it, you can report the violation to gpl-violations.org, as Linux kernel source code is under GPLv2.
+
+- Kernel version: systemd currently requires kernel 3.13+ (https://github.com/systemd/systemd/blob/master/README#L35) and coreutils should work on kernel 3.0+ (we don't know the exact kernel version yet at the time of writing).
+
+NOTE: If systemd cannot be used with your kernel, try a different init like OpenRC, System V Init or runit!
+
+- RAM: 1 GB should be enough for the device to start, and should be okay for using CLI applications. But we recommend 2 GB or more if you're going to run daily tasks.
+
+- Storage: 16 GB is recommended for a better user experience.
+
+NOTE: Keep in mind that each device has their own size limitations, the Pocophone F1 can only support up to 256 GB.
+
+If you're unsure about your requirements, you can join our Discord server and ask about it.
+
+-----------------------
+Chapter 2: OBTAIN THE ROOTFS AND KERNEL
+This chapter will walkthrough in detail obtaining Arch Linux ARM rootfs and device's kernel.
+
+DEVICE KERNEL SOURCE TREE:
+It's best that you should use LineageOS kernel instead of the official kernel, you can obtain the LineageOS kernel by looking at LineageOS build guide for your device.
+
+Example for xiaomi-santoni: https://wiki.lineageos.org/devices/santoni/build
+
+When you got to your device page, look for "Prepare the device-specific code" in the page and you should be able to get both kernel from the blue links.
+
+You'll have to git clone the kernel, it's not needed, but recommended for easier access to new kernel updates. Don't forget to change the branch to the supported ones, my device only support lineage-15.1 the current time writing this guide.
+
+You can switch branch by: "git checkout lineage-15.1"
+
+In some cases where the device doesn't have a LineageOS port, you can use unofficial kernels, or maybe the official kernel, this is up to you, however not all kernels are equal (official might be buggy, or unofficial might be buggier).
+
+ARCH LINUX ARM ROOTFS:
+At this point, you'll need to know what is your device architecture. It's easy to know by typing "uname -m" in Android shell. Once you got that go to this webpage: http://os.archlinuxarm.org/os/
+
+Look for the "generic" rootfs image for your device architecture, the image file name should be like this: 
+ArchLinuxARM-aarch64-latest.tar.gz
+
+NOTE: armv8 is 64-bit ARM, but also called as aarch64.
+
+If the device is a armv6, armv5 image will have to be used.
+-----------------------
+Chapter 3: KERNEL COMPILING
+We won't be covering kernel compiling as you can read this guide from a XDA member.
+https://forum.xda-developers.com/android/software-hacking/reference-how-to-compile-android-kernel-t3627297
+
+However certain configs needs to be enabled, refer to this wiki page from postmarketOS:
+https://wiki.postmarketos.org/wiki/Kernel_configuration
+
+If you're using systemd, these following kernel options needs to be enabled:
+https://github.com/systemd/systemd/blob/master/README#L38-L136
+-----------------------
+Chapter 4: ROOTFS SETUP
+
+After you have downloaded your rootfs image, it's a good time to install it.
+WARNING: YOUR DATA ON THE SD CARD WILL BE ERASED, MAKE BACKUPS!
+I REPEAT, YOUR DATA ON THE SD CARD WILL BE ERASED, MAKE BACKUPS!
+
+Insert your SD card to your computer (use a adapter), format the disk as MBR (at the current time writing, 2 TB SD card doesn't exist yet for consumer use)
+
+PARTITIONING:
+
+- First partition should be root, and should be formatted under ext3 or ext4.
+
+WARNING: PLEASE DO NOT USE EXT2! IT IS NOT JOURNALED AND DATA LOSS CAN OCCURS IN CASE OF SUDDEN DISMOUNT LIKE POWER LOSS AND KERNEL LOCK.
+
+NOTE: You can also use other file systems at your choice, but make sure the kernel is compiled with support for it!
+
+- Second partition should be swap, on devices with low memory (like 512 MB), it really needs swap, but also sometimes it is required for drivers to load, such as Wi-Fi and ADSP.
+
+NOTE: You can also setup swapfile instead of a partition. https://wiki.archlinux.org/index.php/swap#Swap_file
+
+INSTALL ROOTFS:
+
+After finished partitioning, mkfs the partitions, and mount the root partition to /mnt
+
+On a terminal, run this command:
+# bsdtar -xpf ArchLinuxARM-aarch64-latest.tar.gz -C /mnt
+
+This command will extract the rootfs to /mnt.
+
+INSTALL KERNEL MODULES:
+Run this command in the kernel source directory:
+$ make modules_install INSTALL_MOD_PATH=../kernel_modules
+
+NOTE: If "O=" parameter is set when compiling the kernel, please append that to the command above.
+
+This will create a folder called kernel_modules outside the kernel source folder, from there you can type this command as root in order to install the modules:
+$ sudo cp -rv ../kernel_modules/lib /mnt/
+
+After done, unmount the partition and eject the card.
+-----------------------
+Chapter 5: BOOT THE NEW KERNEL AND START CONFIGURING ARCH LINUX
+
+BOOT THE KERNEL:
+Back with the kernel you've compiled, flash the kernel to your device (make backup before flashing it)
+
+NOTE: If you need to know how to flash a kernel, check out the 4th step of this post:
+https://forum.xda-developers.com/android/software-hacking/reference-how-to-compile-android-kernel-t3627297
+
+Once you got to Android, make sure check the kernel version in "About Phone", if it is compiled under your computer's hostname, congrats, your kernel is installed. If so, you can continue to configure Arch Linux.
+
+CONFIGURE ARCH LINUX ROOTFS:
+Plug your device to the computer, run adb shell, and make sure that your device is rooted!
+
+Make sure you have installed meefik's BusyBox:
+https://github.com/meefik/busybox/releases/download/1.30.1/busybox-1.30.1-40.apk
+
+After that, be root (su) and look into /dev/block and you should see mmcblk1 aside of mmcblk0.
+
+mmcblk0: Internal Storage
+mmcblk1: SD Card (our target)
+
+Depends on how you partitioned the card, mmcblk1p1 should be the ext4 formatted partition.
+Now make /data/local/mnt and mount mmcblk1p1 to /data/local/mnt:
+# mkdir -p /data/local/mnt && busybox mount /dev/block/mmcblk1p1 /data/local/mnt
+
+NOW IF THE PARTITION MOUNTED JUST FINE, SKIP THIS STEP:
+If mounting failed with a error of the partition being used or anything, Android has mounted the partition, go to Storage settings in Android and unmount the SD Card and try the command again.
+
+After the partition has mounted. These commands needs to be run:
+
+busybox mount -o bind /dev /data/local/mnt/dev
+busybox mount -o bind /dev/pts /data/local/mnt/dev/pts
+busybox mount -t proc none /data/local/mnt/proc
+busybox mount -t sysfs none /data/local/mnt/sys
+
+Now run "busybox chroot /data/local/mnt /bin/bash".
+If you see a shell: "[root@localhost]", you're now inside Arch Linux.
+
+Run this command in order to do anything in the environment.
+source /etc/profile
+
+GETTING INTERNET ACCESS AND CONFIGURE FOR INITIAL BOOT:
+
+You'll now need to access the internet, this can be done by:
+# rm /etc/resolv.conf && echo "nameserver 1.1.1.1" > /etc/resolv.conf
+
+After done, type "ping duckduckgo.com" and confirm that it works.
+
+You'll now need to install base-devel group, this will pack the system with compiler and tools required to use AUR, which we'll have to do next in order to finish our setup.
+
+Install these packages:
+# pacman -S base-devel lightdm xorg-xinit xfce4 networkmanager --needed
+
+Now add user "alarm" to wheel group, this will give Arch Linux ARM default user sudo, which is needed to run makepkg.
+
+You'll also need to set a password for alarm user using "passwd alarm" command.
+
+And git clone this repo after typing "su - alarm":
+$ git clone https://github.com/Danct12/arch-linux-santoni.git
+
+After that, go to the folder and Arch_PKGBUILDs, and it's best that you should install all packages.
+
+NOTE: DO NOT INSTALL FIRMWARE-XIAOMI-SANTONI IF YOUR DEVICE ISN'T A XIAOMI REDMI 4X.
+
+To install a PKGBUILD, run "makepkg -si" in a folder with PKGBUILD file.
+
+NOTE: WCNSS, ADSP HAS A WATCHDOG, SO WITHOUT FIRMWARE FILES, YOU'LL RUN INTO RANDOM REBOOTS DUE TO TIMEOUT TRIPPED DUE TO FIRMWARE FILES CANNOT BE DOWNLOADED.
+
+After finished install these PKGBUILD files, enable the service as root:
+# systemctl enable usb_networking.service
+
+Edit /etc/dhcpcd.conf with these settings at the end of the file:
+
+interface rndis0
+static ip_address=172.16.42.1/24
+static routers=172.16.42.1
+static domain_name_servers=1.1.1.1
+
+Once that's done, run "systemctl enable dhcpcd.service" and you'll get USB networking from device to host when booting the device natively.
+
+FSTAB:
+Now you have it's all done, you're still missing something VERY important, that is an fstab file.
+
+Without this file, the rootfs will be mounted as read-only, which will make Arch running on your device as a brick. (Cannot do anything other than read-only system)
+
+Edit the /etc/fstab file:
+
+```
+# SWAP (SKIP THIS IF YOU USE SWAPFILE)
+/dev/mmcblk1p2	none      	swap      	defaults,pri=-2	0 0
+
+# ROOTFS
+/dev/mmcblk1p1	/         	ext4      	rw,relatime	0 1
+```
+
+GENERATE INITRAMFS:
+
+Initramfs is required for a device to boot, and so to make one, create a new file in /etc/mkinitcpio.d/linux-devicename.preset with this:
+
+```
+ALL_config="/etc/mkinitcpio.conf"
+
+# Look in /lib/modules, there'll be your kernel folder name, for my case it's "3.18.136-danct-dreemurr". **REPLACE THE BELOW WITH YOUR OWN ONE**
+ALL_kver="3.18.136-danct-dreemurr"
+
+PRESETS=('default' 'fallback')
+
+#default_config="/etc/mkinitcpio.conf"
+default_image="/boot/initramfs-linux.img"
+#default_options=""
+
+#fallback_config="/etc/mkinitcpio.conf"
+fallback_image="/boot/initramfs-linux-fallback.img"
+fallback_options="-S autodetect"
+```
+Once that's done, run "# mkinitcpio -p linux-devicename" and you'll find initramfs-linux.img in /boot.
+
+Exit the chroot and adb shell, then type pull /data/local/mnt/boot/initramfs-linux.img from adb. Then go back the adb shell, "umount -R /data/local/mnt" as root.
+-----------------------
+Chapter 6: MAKE BOOT IMAGE AND BOOT IT
+
+Now, back with the android image kitchen thing you've done to get the new kernel booted, replace the initramfs image in the output folder with the one's from Arch Linux you just generated. And append this to the cmdline:
+
+"root=/dev/mmcblk1p1"
+
+Regenerate the image, and finally you can "fastboot boot" to the image.
+
+In no time soon, if you see a new network interface on your computer, the kernel and Arch Linux has booted successfully.
+
+You'll need to assign yourself a IP address to the interface, as DHCP server isn't configured yet, this might be covered in a future guide, or a future PKGBUILD.
+
+Assign the IP to your new network interface as:
+IP: 172.16.42.2
+Netmask: 255.255.255.0
+Gateway: 172.16.42.1
+
+And now you can ssh to 172.16.42.1 as user alarm.
+-----------------------
+Chapter 7: ACCESSING THE INTERNET ON YOUR ARCH LINUX ARM DEVICE THROUGH YOUR COMPUTER
+Since we don't have Wi-Fi connectivity yet, we'll need to route our internet from the host computer to the device.
+
+On your ALARM SSH session, run:
+$ sudo route add default gw 172.16.42.2
+$ echo nameserver 1.1.1.1 | sudo tee /etc/resolv.conf
+
+On your host machine:
+$ sudo sysctl net.ipv4.ip_forward=1
+$ sudo iptables -P FORWARD ACCEPT
+$ sudo iptables -A POSTROUTING -t nat -j MASQUERADE -s 172.16.42.0/24
+
+And now you can ping to google.com in the ALARM SSH session.
+
+From: https://wiki.postmarketos.org/wiki/USB_Internet
+-----------------------
+ENDING NOTE:
+You have a working portable Arch Linux system! Through Wi-Fi probably isn't working yet (for those on non-MSM devices)
+Now, install a desktop environment and a display manager and xf86-video-fbdev, start the service and enjoy your setup. Keep in mind that the display is still very buggy the current time writing, however this can be fixed when I update the guide next time.
+
+THANKS TO:
+postmarketOS - https://postmarketos.org
+XDA Developers - https://xda-developers.com
+DanctNIX Discord - https://discord.gg/AvtdRJ3
+
+Without these, running GNU/Linux on a portable device isn't possible.
+
+Last updated: April 9, 2019 - 04:59 AM (GMT+7)
