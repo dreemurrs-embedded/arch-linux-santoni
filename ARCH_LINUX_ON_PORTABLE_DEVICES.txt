@@ -291,6 +291,30 @@ And now you can ping to google.com in the ALARM SSH session.
 
 From: https://wiki.postmarketos.org/wiki/USB_Internet
 -----------------------
+Chapter 8: GETTING WCNSS WLAN TO WORK ON GNU/LINUX [QUALCOMM MSM DEVICES ONLY!]
+In order to have a truly portable phablet, you'll need to unplug the device from your computer, but the problem is that you cannot access the internet without it plugged to your computer.
+
+You'll need Android to do this, but if you have already flashed: I hope you have a backup on the SD Card or internal, a recovery installed [TWRP]
+
+Now once you're booted, follow the busybox mounting from Chapter 5.
+
+Before chrooting to the environment, type "fdisk -l /dev/block/mmcblk0", this will give you the partition layout.
+Now mount the partition number that is named "modem" as ro,loop in a blank folder (i'll call the blank folder "asrielware".
+
+Now after that, copy every files in /firmware/image (including the folder inside the image folder) to /data/local/mnt/usr/lib/firmware/postmarketos.
+# mkdir /data/local/mnt/usr/lib/firmware/postmarketos
+# cp -rv /data/local/asrielware/* /data/local/mnt/usr/lib/firmware/postmarketos
+
+Once that's done, make sure the /data/local/mnt/usr/lib/firmware/postmarketos folder is filled with files under unrecognizable format: ".b00, .b01, .mdt (or anything)
+
+After that's done, chroot to the environment and enable wcnss-wlan service:
+# systemctl enable wcnss-wlan.service
+
+Now boot back and run "ip a" inside the ALARM SSH session, if you see a wlan0 device or any wlan interface, congrats, Wi-Fi is loaded, now you'll need to connect to it using wpa_supplicant or NetworkManager (depends on you).
+
+NOTE: IF WI-FI ISN'T WORKING, CHECK THE "/var/log/firmwareload.log" FILE FOR "error loading".
+
+-----------------------
 ENDING NOTE:
 You have a working portable Arch Linux system! Through Wi-Fi probably isn't working yet (for those on non-MSM devices)
 Now, install a desktop environment and a display manager and xf86-video-fbdev, start the service and enjoy your setup. Keep in mind that the display is still very buggy the current time writing, however this can be fixed when I update the guide next time.
