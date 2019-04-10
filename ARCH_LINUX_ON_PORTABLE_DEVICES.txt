@@ -1,13 +1,13 @@
-ARCH LINUX ON PORTABLE DEVICES
+  ARCH LINUX ON PORTABLE DEVICES
 INSTALLATION GUIDE - PORTING GUIDE
-      UPDATED ON APRIL 8, 2019
+      UPDATED ON APRIL 10, 2019
 -----------------------
 READ THE BELOW WARNING BEFORE PROCEED:
 
 /*
- * Your warranty is now void, probably.
+ * Your warranty is not voided yet (For Xiaomi Service Center).
  *
- * I am not responsible for bricked devices, dead SD cards, 
+ * Still, I am not responsible for bricked devices, dead SD cards, 
  * thermonuclear war, or you getting fired because the alarm failed to go off. Please
  * do some research if you have any concerns when using a full GNU/Linux distro
  * before flashing it! YOU are choosing to make these modifications, and if
@@ -167,23 +167,23 @@ If mounting failed with a error of the partition being used or anything, Android
 
 After the partition has mounted. These commands needs to be run:
 
-busybox mount -o bind /dev /data/local/mnt/dev
-busybox mount -o bind /dev/pts /data/local/mnt/dev/pts
-busybox mount -t proc none /data/local/mnt/proc
-busybox mount -t sysfs none /data/local/mnt/sys
+# busybox mount -o bind /dev /data/local/mnt/dev
+# busybox mount -o bind /dev/pts /data/local/mnt/dev/pts
+# busybox mount -t proc none /data/local/mnt/proc
+# busybox mount -t sysfs none /data/local/mnt/sys
 
-Now run "busybox chroot /data/local/mnt /bin/bash".
+Now run "# busybox chroot /data/local/mnt /bin/bash".
 If you see a shell: "[root@localhost]", you're now inside Arch Linux.
 
 Run this command in order to do anything in the environment.
-source /etc/profile
+# source /etc/profile
 
 GETTING INTERNET ACCESS AND CONFIGURE FOR INITIAL BOOT:
 
 You'll now need to access the internet, this can be done by:
 # rm /etc/resolv.conf && echo "nameserver 1.1.1.1" > /etc/resolv.conf
 
-After done, type "ping duckduckgo.com" and confirm that it works.
+After done, type "# ping duckduckgo.com" and confirm that it works.
 
 You'll now need to install base-devel group, this will pack the system with compiler and tools required to use AUR, which we'll have to do next in order to finish our setup.
 
@@ -192,16 +192,16 @@ Install these packages:
 
 Now add user "alarm" to wheel group, this will give Arch Linux ARM default user sudo, which is needed to run makepkg.
 
-You'll also need to set a password for alarm user using "passwd alarm" command.
+You'll also need to set a password for alarm user using "# passwd alarm" command.
 
-And git clone this repo after typing "su - alarm":
+And git clone this repo after typing "# su - alarm":
 $ git clone https://github.com/Danct12/arch-linux-santoni.git
 
 After that, go to the folder and Arch_PKGBUILDs, and it's best that you should install all packages.
 
 NOTE: DO NOT INSTALL FIRMWARE-XIAOMI-SANTONI IF YOUR DEVICE ISN'T A XIAOMI REDMI 4X.
 
-To install a PKGBUILD, run "makepkg -si" in a folder with PKGBUILD file.
+To install a PKGBUILD, run "$ makepkg -si" in a folder with PKGBUILD file.
 
 NOTE: WCNSS, ADSP HAS A WATCHDOG, SO WITHOUT FIRMWARE FILES, YOU'LL RUN INTO RANDOM REBOOTS DUE TO TIMEOUT TRIPPED DUE TO FIRMWARE FILES CANNOT BE DOWNLOADED.
 
@@ -215,7 +215,7 @@ static ip_address=172.16.42.1/24
 static routers=172.16.42.1
 static domain_name_servers=1.1.1.1
 
-Once that's done, run "systemctl enable dhcpcd.service" and you'll get USB networking from device to host when booting the device natively.
+Once that's done, run "# systemctl enable dhcpcd.service" and you'll get USB networking from device to host when booting the device natively.
 
 FSTAB:
 Now you have it's all done, you're still missing something VERY important, that is an fstab file.
@@ -254,11 +254,11 @@ fallback_options="-S autodetect"
 ```
 Once that's done, run "# mkinitcpio -p linux-devicename" and you'll find initramfs-linux.img in /boot.
 
-Exit the chroot and adb shell, then type pull /data/local/mnt/boot/initramfs-linux.img from adb. Then go back the adb shell, "umount -R /data/local/mnt" as root.
+Exit the chroot and adb shell, then pull /data/local/mnt/boot/initramfs-linux.img from adb. Then go back the adb shell, "# umount -R /data/local/mnt" as root.
 -----------------------
 Chapter 6: MAKE BOOT IMAGE AND BOOT IT
 
-Now, back with the android image kitchen thing you've done to get the new kernel booted, replace the initramfs image in the output folder with the one's from Arch Linux you just generated. And append this to the cmdline:
+Now, back with the Android Image Kitchen thing you've done to get the new kernel booted, replace the initramfs image in the output folder with the one's from Arch Linux you just generated. And append this to the cmdline:
 
 "root=/dev/mmcblk1p1"
 
@@ -305,7 +305,7 @@ Now after that, copy every files in /firmware/image (including the folder inside
 # mkdir /data/local/mnt/usr/lib/firmware/postmarketos
 # cp -rv /data/local/asrielware/* /data/local/mnt/usr/lib/firmware/postmarketos
 
-Once that's done, make sure the /data/local/mnt/usr/lib/firmware/postmarketos folder is filled with files under unrecognizable format: ".b00, .b01, .mdt (or anything)
+Once that's done, make sure the /data/local/mnt/usr/lib/firmware/postmarketos folder is filled with files under unrecognizable format: ".b00, .b01, .mdt (or anything)"
 
 After that's done, chroot to the environment and enable wcnss-wlan service:
 # systemctl enable wcnss-wlan.service
@@ -325,5 +325,3 @@ XDA Developers - https://xda-developers.com
 DanctNIX Discord - https://discord.gg/AvtdRJ3
 
 Without these, running GNU/Linux on a portable device isn't possible.
-
-Last updated: April 9, 2019 - 04:59 AM (GMT+7)
