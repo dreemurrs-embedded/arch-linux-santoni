@@ -1,0 +1,22 @@
+# Contributor: Danct12 <dancthuynh255@gmail.com>
+# Maintainer: Asriel DanctNIX <asriel.danctnix@gmail.com>
+pkgname=alsa-ucm-msm8920-sku7
+pkgver=0.1
+pkgrel=0
+pkgdesc="ALSA UCM files for MSM8920 SKU7 sound chips."
+arch=('any')
+url=""
+license=('')
+source=('HiFi::https://raw.githubusercontent.com/Danct12/arch-linux-santoni/master/UCM/msm8920-sku7-snd-card/HiFi'
+	'msm8920-sku7-snd-card.conf::https://raw.githubusercontent.com/Danct12/arch-linux-santoni/master/UCM/msm8920-sku7-snd-card/msm8920-sku7-snd-card.conf')
+
+package() {
+	# UCM files are done by Danct12 [https://github.com/Danct12/arch-linux-santoni]
+	mkdir -p "$pkgdir"/usr/share/alsa/ucm/msm8920-sku7-snd-card
+	install -D -m644 "$srcdir"/HiFi \
+		"$pkgdir"/usr/share/alsa/ucm/msm8920-sku7-snd-card/HiFi
+	install -D -m644 "$srcdir"/msm8920-sku7-snd-card.conf \
+		"$pkgdir"/usr/share/alsa/ucm/msm8920-sku7-snd-card/msm8920-sku7-snd-card.conf
+}
+md5sums=('6f2a7a625f496f3b93f4e4044fc618fb'
+         'e62ff302f7e21df109ef9595cbaeea5c')
