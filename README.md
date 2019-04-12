@@ -45,7 +45,7 @@ Full system specs: https://www.gsmarena.com/xiaomi_redmi_4_(4x)-8608.php#redmi-4
 - Display
 - Wi-Fi + Hotspot
 - USB Ethernet (local SSH, but also SSH via USB works)
-- Sound (drop msm8920-sku7-snd-card folder from this repo to /usr/share/alsa/ucm)
+- Sound
 - Xorg
 - DPMS for Xorg (screen going to sleep just fine)
 - USB OTG

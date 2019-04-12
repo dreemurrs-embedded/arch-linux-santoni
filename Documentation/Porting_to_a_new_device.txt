@@ -37,8 +37,11 @@ REQUIREMENTS:
 - Soul and determination
 
 GETTING HELP:
-If you get stuck at any point during the porting process, we’re here to help! You can contact us via the Discord server:
-https://discord.gg/AvtdRJ3
+If you get stuck at any point during the porting process, we’re here to help! You can contact us via these platforms:
+Discord: https://discord.gg/AvtdRJ3
+Matrix: #danctnix-porting:matrix.org
+
+All these servers are bridged to each other.
 
 Keep in mind that not all of us are online frequently and can help with certain things. It might take sometime for someone to respond.
 
@@ -76,6 +79,14 @@ You'll have to git clone the kernel, it's not needed, but recommended for easier
 You can switch branch by: "git checkout lineage-15.1"
 
 In some cases where the device doesn't have a LineageOS port, you can use unofficial kernels, or maybe the official kernel, this is up to you, however not all kernels are equal (official might be buggy, or unofficial might be buggier).
+
+And if you're so unlucky to have a device without a UNOFFICIAL or LineageOS kernel, you can use the official kernels from the manufacturer:
+
+Samsung: http://opensource.samsung.com
+Xiaomi: https://github.com/MiCode/Xiaomi_Kernel_OpenSource
+Sony: http://developer.sonymobile.com/downloads/xperia-open-source-archives/
+
+.. and many more to come, make a pull request if you want more to be added!
 
 ARCH LINUX ARM ROOTFS:
 At this point, you'll need to know what is your device architecture. It's easy to know by typing "uname -m" in Android shell. Once you got that go to this webpage: http://os.archlinuxarm.org/os/
