@@ -1,0 +1,20 @@
+pkgname=hwtest
+pkgver=0.1.0
+pkgrel=0
+pkgdesc="Small utility to check hardware functionality on phones"
+arch=(any)
+url="https://gitlab.com/MartijnBraam/hwtest"
+license=('MIT')
+depends=(python3 ffmpeg v4l-utils)
+source=($pkgname-$pkgver.tar.gz::https://gitlab.com/MartijnBraam/hwtest/-/archive/$pkgver/$pkgname-$pkgver.tar.gz)
+
+build() {
+  cd "$pkgname-$pkgver"
+  python3 setup.py build
+}
+
+package() {
+  cd "$pkgname-$pkgver"
+  python3 setup.py install --prefix=/usr --root="$pkgdir"
+}
+md5sums=('4000acf1fa3e24b6c0597fc4a85be066')
